@@ -46,6 +46,10 @@ if [[ ! $(yq -r .workers ${helperPodYaml}) == "null" ]]; then
 fi
 
 #
+## Create files for iPXE
+mkdir /var/lib/tftpboot/menu
+
+#
 ## PXE is a "best effort" service that is kind of "old". So putting this here as a placeholder until someone has time to write a "checker"
 if false ; then
 	echo "=============================="

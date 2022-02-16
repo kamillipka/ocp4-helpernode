@@ -1,0 +1,34 @@
+#!ipxe
+
+:start
+menu PXE Boot Options
+item shell iPXE shell
+item bootstrap Bootstrap CoreOS installation
+item master Master CoreOS installation
+item worker Worker CoreOS installation
+item exit Exit to BIOS
+
+choose --default centos7-net --timeout 10000 option && goto ${option}
+
+:shell
+shell
+
+:bootstrap
+set http_server http://{{ helper.ipaddr }}:{{ http_port }}/
+initrd ${http_server}/images/pxeboot/initrd.img
+kernel ${http_server}/images/pxeboot/vmlinuz inst.repo=${http_server}/ ip=dhcp ipv6.disable initrd=initrd.img inst.geoloc=0 devfs=nomount
+
+:master
+set http_server http://{{ helper.ipaddr }}:{{ http_port }}/
+initrd ${server_root}/images/pxeboot/initrd.img
+kernel ${server_root}/images/pxeboot/vmlinuz inst.repo=${server_root}/ ip=dhcp ipv6.disable initrd=initrd.img inst.geoloc=0 devfs=nomount
+boot
+
+:worker
+set http_server http://{{ helper.ipaddr }}:{{ http_port }}/
+initrd ${server_root}/images/pxeboot/initrd.img
+kernel ${server_root}/images/pxeboot/vmlinuz inst.repo=${server_root}/ ip=dhcp ipv6.disable initrd=initrd.img inst.geoloc=0 devfs=nomount
+boot
+
+:exit
+exit
